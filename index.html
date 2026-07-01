@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SahayaScribe connects visually impaired students with trusted volunteer scribes for examinations.">
+  <title>SahayaScribe — Find a trusted exam scribe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="topbar">
+    <button class="brand" type="button" data-go="welcome" aria-label="SahayaScribe home">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span>Sahaya<span>Scribe</span></span>
+    </button>
+    <div class="header-actions">
+      <button class="icon-btn" id="contrastBtn" type="button" aria-label="Toggle high contrast"><span aria-hidden="true">◐</span></button>
+      <button class="text-btn" id="textSizeBtn" type="button" aria-label="Increase text size">A<span aria-hidden="true">+</span></button>
+      <button class="lang-btn" type="button" aria-label="Change language">EN <span aria-hidden="true">⌄</span></button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="screen active welcome-screen" id="welcome" aria-labelledby="welcome-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><span aria-hidden="true">✦</span> Support for every exam</div>
+        <h1 id="welcome-title">The right support,<br><em>right when it matters.</em></h1>
+        <p>SahayaScribe connects visually impaired students with verified volunteer scribes—simply, safely, and on time.</p>
+        <div class="trust-row" aria-label="Service benefits">
+          <span><b aria-hidden="true">✓</b> Verified volunteers</span>
+          <span><b aria-hidden="true">✓</b> Smart matching</span>
+          <span><b aria-hidden="true">✓</b> Backup support</span>
+        </div>
+      </div>
+      <div class="role-panel">
+        <p class="step-label">LET'S GET STARTED</p>
+        <h2>Who are you?</h2>
+        <p>Choose the option that best describes you.</p>
+        <button class="role-card student-card" type="button" data-go="student-register">
+          <span class="role-icon" aria-hidden="true">♿</span>
+          <span><strong>I am a Student</strong><small>I need a scribe for my examination</small></span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="role-card scribe-card" type="button" data-go="scribe-register">
+          <span class="role-icon" aria-hidden="true">✎</span>
+          <span><strong>I am a Scribe</strong><small>I want to volunteer and help a student</small></span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </button>
+        <p class="signin">Already registered? <button type="button" data-go="student-home">Sign in</button></p>
+      </div>
+    </section>
+
+    <section class="screen form-screen" id="student-register" aria-labelledby="student-reg-title">
+      <div class="form-heading">
+        <button class="back-btn" type="button" data-go="welcome">← Back</button>
+        <span class="kicker">STUDENT REGISTRATION</span>
+        <h1 id="student-reg-title">Tell us about yourself</h1>
+        <p>This helps us find the right scribe for you. Fields marked * are required.</p>
+      </div>
+      <form class="form-card" data-submit="student-success" data-api="student">
+        <div class="form-grid">
+          <label>Full Name *<input name="fullName" required autocomplete="name" placeholder="Enter your full name"></label>
+          <label>Mobile Number *<span class="input-action"><input name="mobile" required type="tel" autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number"><button type="button" class="otp-btn">Send OTP</button></span></label>
+          <label>School / College *<input name="institution" required placeholder="Name of institution"></label>
+          <label>Semester / Year *<input name="semesterYear" required placeholder="e.g. Semester 4"></label>
+          <label class="full">Medium of Study *<select name="medium" required><option value="">Select your medium</option><option>English</option><option>Kannada</option><option>Hindi</option><option>Tamil</option><option>Telugu</option><option>Other</option></select></label>
+          <label class="full upload-box"><input type="file" accept=".pdf,.jpg,.jpeg,.png"><span aria-hidden="true">↑</span><strong>Upload Disability Certificate</strong><small>Optional, but recommended · PDF, JPG or PNG</small></label>
+        </div>
+        <label class="check-row"><input required type="checkbox"><span>I confirm that I require a scribe for examinations.</span></label>
+        <button class="primary-btn" type="submit">Register as Student <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+
+    <section class="screen form-screen" id="scribe-register" aria-labelledby="scribe-reg-title">
+      <div class="form-heading">
+        <button class="back-btn" type="button" data-go="welcome">← Back</button>
+        <span class="kicker coral">SCRIBE REGISTRATION</span>
+        <h1 id="scribe-reg-title">Volunteer your time</h1>
+        <p>A few details help us match you with the right student and exam.</p>
+      </div>
+      <form class="form-card" data-submit="scribe-success" data-api="scribe">
+        <div class="form-grid">
+          <label>Full Name *<input name="fullName" required autocomplete="name" placeholder="Enter your full name"></label>
+          <label>Mobile Number *<span class="input-action"><input name="mobile" required type="tel" autocomplete="tel" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number"><button type="button" class="otp-btn">Send OTP</button></span></label>
+          <label>Age *<input name="age" required type="number" min="16" placeholder="Your age"></label>
+          <label>City *<input name="city" required placeholder="Your city"></label>
+          <fieldset class="full"><legend>You are a *</legend><div class="choice-pills"><label><input required type="radio" name="role" value="School Student"><span>School Student</span></label><label><input type="radio" name="role" value="College Student"><span>College Student</span></label><label><input type="radio" name="role" value="Working Professional"><span>Working Professional</span></label></div></fieldset>
+          <label>Educational Qualification *<input name="qualification" required placeholder="e.g. BCom, BSc, Engineering, Arts"></label>
+          <label>Background / Stream *<select name="background" required><option value="">Select background</option><option>Science</option><option>Commerce</option><option>Arts</option><option>Other</option></select></label>
+          <fieldset class="full"><legend>Which medium can you write in? * <small>(select all that apply)</small></legend><div class="choice-pills"><label><input type="checkbox" name="writingMedium" value="English"><span>English</span></label><label><input type="checkbox" name="writingMedium" value="Kannada"><span>Kannada</span></label><label><input type="checkbox" name="writingMedium" value="Hindi"><span>Hindi</span></label><label><input type="checkbox" name="writingMedium" value="Tamil"><span>Tamil</span></label><label><input type="checkbox" name="writingMedium" value="Telugu"><span>Telugu</span></label></div></fieldset>
+          <label class="full upload-box"><input required type="file" accept=".pdf,.jpg,.jpeg,.png"><span aria-hidden="true">↑</span><strong>Upload ID for verification *</strong><small>College ID or Aadhaar · Stored securely</small></label>
+        </div>
+        <label class="check-row"><input required type="checkbox"><span>I agree to volunteer as a scribe for visually impaired students.</span></label>
+        <button class="primary-btn coral-btn" type="submit">Register as Scribe <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+
+    <section class="screen success-screen" id="student-success" aria-labelledby="student-success-title">
+      <div class="success-icon" aria-hidden="true">✓</div><span class="kicker">REGISTRATION COMPLETE</span>
+      <h1 id="student-success-title">You’re all set!</h1><p>Thank you for registering. You can now book a scribe for your exam.</p>
+      <button class="primary-btn" type="button" data-go="book-scribe">Book a Scribe <span aria-hidden="true">→</span></button>
+    </section>
+
+    <section class="screen success-screen" id="scribe-success" aria-labelledby="scribe-success-title">
+      <div class="success-icon coral-bg" aria-hidden="true">✓</div><span class="kicker coral">WELCOME ABOARD</span>
+      <h1 id="scribe-success-title">Thank you for volunteering!</h1><p>Your profile is ready. You can now view student exam requests that match your eligibility.</p>
+      <button class="primary-btn coral-btn" type="button" data-go="scribe-requests">Browse eligible exams <span aria-hidden="true">→</span></button>
+    </section>
+
+    <section class="screen form-screen" id="book-scribe" aria-labelledby="book-title">
+      <div class="form-heading">
+        <button class="back-btn" type="button" data-go="student-home">← Dashboard</button><span class="kicker">SCRIBE REQUEST</span>
+        <h1 id="book-title">Book a scribe</h1><p>Share your exam details and we’ll find the best available match.</p>
+      </div>
+      <form class="form-card" data-submit="request-success" data-api="request">
+        <div class="form-grid">
+          <label>Exam Date *<input name="examDate" required type="date"></label>
+          <div class="split"><label>From *<input name="startTime" required type="time"></label><label>To *<input name="endTime" required type="time"></label></div>
+          <label>Exam Centre Name *<input name="centreName" required placeholder="Centre name"></label>
+          <label>Subject *<input name="subject" required placeholder="e.g. Economics"></label>
+          <label class="full">Exam Centre Address *<span class="input-action"><input name="centreAddress" required placeholder="Full address"><button type="button" class="otp-btn">⌖ Pin</button></span></label>
+          <label>Medium of Question Paper *<select name="questionMedium" required><option value="">Select medium</option><option>English</option><option>Kannada</option><option>Hindi</option><option>Tamil</option><option>Telugu</option></select></label>
+          <label>Preferred Scribe Qualification *<select name="preferredQualification" required><option value="">Select qualification</option><option>10th pass</option><option>12th pass</option><option>Graduate</option></select></label>
+          <fieldset class="full"><legend>Which background should the scribe NOT be from?</legend><div class="choice-pills"><label><input type="checkbox" name="blockedBackgrounds" value="Science"><span>Science</span></label><label><input type="checkbox" name="blockedBackgrounds" value="Commerce"><span>Commerce</span></label><label><input type="checkbox" name="blockedBackgrounds" value="Arts"><span>Arts</span></label></div></fieldset>
+          <label class="full">Additional Notes <textarea name="notes" rows="4" placeholder="Exam hall instructions, entry time, centre contact..."></textarea></label>
+        </div>
+        <button class="primary-btn" type="submit">Submit Request <span aria-hidden="true">→</span></button>
+      </form>
+    </section>
+
+    <section class="screen success-screen" id="request-success" aria-labelledby="request-success-title">
+      <div class="success-icon" aria-hidden="true">✓</div><span class="kicker">REQUEST SENT</span>
+      <h1 id="request-success-title">Your request is live.</h1><p>Your request has been sent. Eligible scribes can now view it and choose to accept.</p>
+      <div class="matching-card"><span class="pulse" aria-hidden="true"></span><div><strong>Waiting for a volunteer</strong><small>Scribes who match your medium, qualification and background rules can see this exam.</small></div></div>
+      <button class="primary-btn" type="button" data-go="student-home">Go to dashboard <span aria-hidden="true">→</span></button>
+    </section>
+
+    <section class="screen dashboard" id="student-home" aria-labelledby="dashboard-title">
+      <div class="dash-head"><div><span class="kicker">STUDENT DASHBOARD</span><h1 id="dashboard-title">Good morning, Ananya</h1><p>Ready for your next exam?</p></div><button class="primary-btn" type="button" data-go="book-scribe">+ Book a Scribe</button></div>
+      <div class="feature-grid"><article><span aria-hidden="true">⌁</span><h2>Smart matching</h2><p>Matched by location, language, qualification and availability.</p></article><article><span aria-hidden="true">♢</span><h2>Verified scribes</h2><p>Every volunteer completes ID verification before matching.</p></article><article><span aria-hidden="true">↻</span><h2>Backup support</h2><p>Request a standby volunteer for extra peace of mind.</p></article></div>
+      <div class="empty-card"><span aria-hidden="true">☷</span><h2>No upcoming exams</h2><p>Book a scribe and your request will appear here.</p><button class="outline-btn" data-go="book-scribe">Book your first scribe</button></div>
+    </section>
+
+    <section class="screen match-screen" id="student-match" aria-labelledby="student-match-title">
+      <span class="kicker">GREAT NEWS</span><h1 id="student-match-title">A scribe has been found!</h1><p class="lead">Your exam support is confirmed.</p>
+      <div class="match-card"><div class="profile-row"><div class="avatar">RS</div><div><h2>Rahul Sharma <span class="verified" aria-label="Verified">✓</span></h2><p>BCom · Verified volunteer</p><div class="stars" aria-label="4.9 out of 5 stars">★★★★★ <small>4.9</small></div></div></div><dl><div><dt>Phone</dt><dd>XXXXXXXX42</dd></div><div><dt>Exam</dt><dd>Economics</dd></div><div><dt>Date & Time</dt><dd>24 Jun · 10:00 AM–1:00 PM</dd></div><div><dt>Centre</dt><dd>Government First Grade College</dd></div></dl><div class="button-row"><button class="primary-btn" type="button">☎ Call Scribe</button><button class="outline-btn" type="button">◌ Chat</button></div></div>
+      <div class="notice"><b aria-hidden="true">!</b><p><strong>Cancellation policy</strong> Please cancel at least 12 hours before the exam. Repeated late cancellations may lead to account suspension.</p></div>
+      <div class="secondary-actions"><button class="danger-link" type="button">Cancel Request</button><button class="outline-btn" type="button" data-go="rating">Rate after exam</button></div>
+    </section>
+
+    <section class="screen dashboard" id="scribe-requests" aria-labelledby="scribe-requests-title">
+      <div class="dash-head"><div><span class="kicker coral">SCRIBE DASHBOARD</span><h1 id="scribe-requests-title">Choose an exam to help with</h1><p>Only requests that match your profile and eligibility rules are shown here.</p></div><button class="primary-btn coral-btn" type="button" id="refreshRequestsBtn">Refresh list</button></div>
+      <div class="notice blue"><b aria-hidden="true">i</b><p><strong>No direct auto-match</strong> You choose the student exam request you want to accept. If a student blocks your background, that exam will not appear here.</p></div>
+      <div class="request-list" id="eligibleRequests" aria-live="polite"></div>
+    </section>
+
+    <section class="screen match-screen" id="scribe-match" aria-labelledby="scribe-match-title">
+      <span class="kicker coral">NEW MATCH</span><h1 id="scribe-match-title">You’ve been matched!</h1><p class="lead">A student needs your support for an upcoming exam.</p>
+      <div class="match-card"><div class="profile-row"><div class="avatar coral-bg">AS</div><div><h2>Ananya S.</h2><p>Student · Bengaluru</p></div></div><dl><div><dt>Subject</dt><dd>Economics</dd></div><div><dt>Date & Time</dt><dd>24 Jun · 10:00 AM–1:00 PM</dd></div><div><dt>Exam Centre</dt><dd>Government First Grade College</dd></div><div><dt>Medium</dt><dd>English</dd></div></dl><div class="button-row"><button class="primary-btn coral-btn" type="button">⌖ View Location</button><button class="outline-btn" type="button">☎ Contact Student</button></div></div>
+      <div class="notice blue"><b aria-hidden="true">i</b><p><strong>Automatic reminders</strong> We’ll remind you 24 hours and 3 hours before the exam.</p></div>
+      <button class="danger-link" type="button">Cancel within 2 hours</button>
+    </section>
+
+    <section class="screen success-screen" id="rating" aria-labelledby="rating-title">
+      <span class="kicker">EXAM COMPLETE</span><h1 id="rating-title">How was your experience?</h1><p>Your feedback helps keep SahayaScribe safe and supportive.</p>
+      <div class="rating-card"><div class="avatar">RS</div><h2>Rate Rahul</h2><div class="rating-stars" role="radiogroup" aria-label="Rate Rahul out of five"><button aria-label="1 star">★</button><button aria-label="2 stars">★</button><button aria-label="3 stars">★</button><button aria-label="4 stars">★</button><button aria-label="5 stars">★</button></div><textarea aria-label="Optional feedback" rows="3" placeholder="Share a few words (optional)"></textarea><button class="primary-btn" type="button" data-go="student-home">Submit Rating</button></div>
+    </section>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <footer><span>© 2026 SahayaScribe</span><span>Accessible support for every student.</span><nav><a href="#">Privacy</a><a href="#">Help</a><a href="#">Contact</a></nav></footer>
+  <script src="app.js"></script>
+</body>
+</html>
