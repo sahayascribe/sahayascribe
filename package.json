@@ -1,14 +1,28 @@
 {
   "name": "sahayascribe",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "private": true,
   "description": "SahayaScribe connects visually impaired students with volunteer exam scribes.",
-  "main": "server.js",
+  "type": "module",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite build && node server.js",
     "start": "node server.js",
-    "check": "node --check server.js && node --check app.js && node --check admin.js"
+    "test:db": "bash scripts/test-db.sh"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22.12"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.4"
+  }
 }

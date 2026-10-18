@@ -1,0 +1,30 @@
+/* Additions for the React app on top of the original styles. */
+a.brand { text-decoration: none; }
+.button-link { display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
+.form-card > .button-link, .success-screen .button-link { min-width: 220px; }
+button:disabled { opacity: .65; cursor: progress; }
+.lang-btn { padding: 0 13px; }
+.form-error { margin: 0 0 18px; padding: 12px 14px; border-radius: 10px; background: #fdecea; border: 1px solid #f2c3bd; color: #8f2a20; font-weight: 700; }
+.field-error { color: #b23e35 !important; font-weight: 700 !important; }
+.hint { color: var(--muted); margin: 0 0 18px; }
+.section-title { font: 800 24px Manrope, sans-serif; margin: 40px 0 0; }
+.config-notice { max-width: 900px; margin: 20px auto 0; }
+.match-row { margin-top: 18px; }
+.match-row h3 { font: 800 21px Manrope, sans-serif; margin: 0; }
+.request-status.accepted, .status-accepted .request-status { color: #0b5b42; background: #d9f4e7; }
+.status-cancelled { opacity: .7; }
+.status-cancelled .request-status { color: #5b5b5b; background: #ececec; }
+.request-card .danger-link { margin-top: 10px; }
+.inline-rating { margin: 22px 0 0; box-shadow: none; text-align: center; }
+.inline-rating h3 { font: 800 21px Manrope, sans-serif; margin: 0; }
+.form-grid .input-action a.otp-btn { display: inline-flex; align-items: center; text-decoration: none; }
+body.large-text .request-card h2 { font-size: clamp(27px, 3.4vw, 38px); }
+
+/* Each pill's hidden input covers its own pill (not stacked in one spot),
+   and keyboard focus is clearly visible. */
+.choice-pills label { position: relative; }
+.choice-pills input { inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.choice-pills input:focus-visible + span { outline: 3px solid var(--green); outline-offset: 2px; }
+.upload-box:focus-within { outline: 3px solid var(--green); outline-offset: 3px; }
+body.high-contrast .choice-pills input:focus-visible + span,
+body.high-contrast .upload-box:focus-within { outline: 4px solid #ffbf00; }

@@ -1,65 +1,69 @@
 # SahayaScribe features
 
-## Working features (connected to the server)
+Version 2 (React + Supabase). Everything below is backed by the database and protected by
+Row Level Security unless marked otherwise.
 
-### For students
-1. **Student registration**: full name, 10-digit mobile number, school/college, semester or year, and medium of study (English, Kannada, Hindi, Tamil, Telugu, Other).
-2. **One registration per mobile number**: a second registration with the same number is rejected.
-3. **Book a scribe**: the student enters exam date, start and end time, centre name and address, subject, and question-paper language.
-4. **Minimum scribe qualification**: 10th pass, 12th pass or Graduate.
-5. **Block scribe backgrounds**: the student can exclude scribes from Science, Commerce or Arts. This stops a scribe with subject knowledge from influencing the answers.
-6. **Additional notes**: hall instructions, entry time, centre contact.
-7. **Remembers the student**: the browser keeps the registration, so exam requests are linked to the student automatically.
+## Accounts
+1. **Email one-time code sign-in**: no passwords. The same code creates a new account. (Phone OTP was removed.)
+2. **One role per account**: an account is either a student or a scribe, enforced in the database.
+3. **Sign out** from any page.
 
-### For scribes
-8. **Scribe registration**: name, mobile number, age (16+), city, role (school student, college student or working professional), qualification, background, and the languages they can write in.
-9. **Browse eligible exams**: scribes see only open requests they qualify for. The checks are:
-   - their background is not blocked by the student
-   - they can write in the question-paper language
-   - their qualification meets the student's minimum
-10. **The scribe chooses, not the system**: there's no auto-matching. The scribe picks the exam and accepts it.
-11. **Accept an exam**: the request is marked accepted and linked to that scribe, and it disappears from other scribes' lists.
-12. **View location**: opens the exam centre address in Google Maps.
-13. **Refresh list**: reloads the eligible requests.
+## For students
+4. **Student registration**: full name, 10-digit Indian mobile number, school/college, semester or year, medium of study.
+5. **Disability certificate upload** (optional): PDF, JPG or PNG up to 5 MB, stored privately. Only the student and admins can open it.
+6. **Book a scribe**: exam date (no past dates), start and end time, centre name and address, subject, question-paper language.
+7. **Minimum scribe qualification**: 10th pass, 12th pass or Graduate.
+8. **Block scribe backgrounds**: exclude scribes from Science, Commerce or Arts.
+9. **Additional notes** for the scribe.
+10. **Check the centre on Google Maps** while typing the address.
+11. **Student dashboard**: real greeting, upcoming requests with live status (waiting / scribe confirmed), past and cancelled requests.
+12. **Scribe details after a match**: name, qualification, city, average rating and phone number, with a "Call scribe" button.
+13. **Cancel a request** (open or accepted, before the exam date), with the 12-hour cancellation policy shown.
+14. **Rate the scribe** (1–5 stars + optional feedback) once the exam date has passed; one rating per exam.
 
-### Accessibility
-14. **High contrast mode** toggle
-15. **Larger text** toggle
-16. **Skip-to-content link**, ARIA labels, live regions for announcements, and focus moves to each screen's heading
-17. **Atkinson Hyperlegible font**, designed for low-vision readers
-18. **Toast notifications** that screen readers can announce
+## For scribes
+15. **Scribe registration**: name, mobile, age (16+), city, occupation, highest qualification level, course/degree, background, languages they can write in (at least one).
+16. **ID upload** (required): College ID or masked Aadhaar, stored privately. Only the scribe and admins can open it.
+17. **Browse eligible exams**: only open, upcoming requests where
+    - their background is not blocked,
+    - they can write the question-paper language,
+    - their qualification meets the minimum,
+    - the time does not clash with an exam they already accepted.
+18. **Scribe chooses**: no auto-matching. Accepting is checked again in the database, and two scribes cannot accept the same exam.
+19. **Upcoming exams list** with student name, institution and phone number, "Contact student" and "View location".
+20. **Withdraw** from an accepted exam before the exam date; the request reopens for other scribes.
 
-### Admin dashboard (`/admin.html`)
-19. **Password-protected login**: the password is set when the server starts and isn't saved in files. Login is limited to 8 attempts per 15 minutes, and sessions last 8 hours.
-20. **Hidden admin page**: not linked from the public site and set to "noindex" for search engines.
-21. **Counts**: total students, total scribes, total registrations.
-22. **Student and scribe tables** with tabs.
-23. **Search** by name, mobile number, institution or city.
-24. **Refresh and sign out**.
+## Privacy and security
+21. Signed-out visitors cannot read any data.
+22. Users can read and edit only their own profile.
+23. Scribes never see the students table; open requests show only the student's first name and institution.
+24. Phone numbers are visible only to the matched student and scribe, and to admins.
+25. All request changes (accept, withdraw, cancel, rate) go through database functions that re-check the rules.
+26. Documents live in a private storage bucket; each user can only write to their own folder.
+27. Security headers on the site, including a Content Security Policy.
+28. Automated RLS tests (`npm run test:db`).
 
-### Technical
-25. **No dependencies**: runs on plain Node.js 20+.
-26. **Data saved in a JSON file** (`data/registrations.json`), written safely through a temporary file.
-27. **Basic security headers** (no framing, no sniffing, no referrer, no caching), plus input trimming and length limits.
-28. **One-click Windows launcher** (`START-SAHAYASCRIBE.cmd`).
-29. **Ready for Render hosting** (`render.yaml`, `DEPLOYMENT.md`).
+## Accessibility
+29. **High contrast mode** and **larger text** toggles, remembered on the device.
+30. **Skip-to-content link**, labelled controls, live regions, and focus moves to each page's heading.
+31. **Visible keyboard focus** on choice pills and upload boxes.
+32. **Atkinson Hyperlegible font**.
 
-## Shown in the design but not working yet
+## Admin dashboard (`/admin.html`)
+33. **Admin sign-in with email code**, limited to `rishabh@sahayascribe.com` and `fhemanshu@gmail.com` (confirmed emails only).
+34. **Not linked** from the public site and hidden from search engines.
+35. **Counts**: students, scribes, open and accepted requests.
+36. **Tables** for students, scribes and exam requests, with search and refresh.
+37. **View uploaded documents** through short-lived (60-second) private links.
 
-| Feature | Current state |
+## Not built yet
+| Feature | Notes |
 |---|---|
-| Send OTP (phone verification) | Button only shows a "demo" message |
-| Upload disability certificate / scribe ID | File picker shows, but the file is never sent or saved |
-| Map pin for exam centre | Placeholder message |
-| Language switcher (EN ⌄) | Does nothing |
-| Sign in for returning users | Opens the dashboard without checking who you are |
-| Student dashboard with upcoming exams | Fixed text ("Good morning, Ananya"); doesn't show real requests |
-| "Scribe found" screen for the student | Mock data (Rahul Sharma); the student isn't told when a scribe accepts |
-| "You've been matched" screen for the scribe | Mock data |
-| Call / chat with scribe or student | Buttons do nothing |
-| Cancel request, cancellation policy | Text only; there's no cancel logic |
-| Automatic reminders (24h and 3h before the exam) | Mentioned only |
-| Backup / standby scribe | Mentioned only |
-| Ratings (1–5 stars + feedback) | Stars can be clicked, but nothing is saved |
-| Verified volunteer badge | No verification process exists |
-| Exam requests in the admin dashboard | Saved on the server but not shown to admin |
+| Scribe ID verification by admin | Skipped for now, as decided. Scribes can browse as soon as they register. |
+| Notifications (email/SMS) when a scribe accepts or cancels | Students see changes on their dashboard. |
+| Automatic exam reminders | Needs a scheduled job and an email/SMS provider. |
+| Backup / standby scribe | — |
+| In-app chat | Users call each other directly after a match. |
+| Language switcher (Kannada, Hindi, …) | The interface is English only. |
+| Editing a profile or request | Students can cancel and create a new request. |
+| Account deletion by the user | Admins can delete accounts in Supabase. |

@@ -2,10 +2,13 @@ services:
   - type: web
     name: sahayascribe
     runtime: node
-    buildCommand: npm install
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     envVars:
       - key: HOST
         value: 0.0.0.0
-      - key: ADMIN_PASSWORD
+      # Public by design; RLS in Supabase protects the data. Set the values in the Render dashboard.
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
         sync: false
