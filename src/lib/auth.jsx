@@ -75,8 +75,10 @@ export const useAuth = () => useContext(AuthContext);
 
 export const dashboardPath = profile => (profile?.role === 'scribe' ? '/scribe' : profile?.role === 'student' ? '/student' : '/');
 
-// Email one-time code sign-in shared by the public site and the admin page.
-export function useEmailCode() {
+// Email sign-in shared by the public site and the admin page. The email carries
+// a sign-in link (returns to redirectTo) and, once a custom email template is set
+// up in Supabase, a one-time code that can be typed in instead.
+export function useEmailCode(redirectTo) {
   const [step, setStep] = useState('email');
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
@@ -97,7 +99,10 @@ export function useEmailCode() {
   const sendCode = address =>
     run(async () => {
       const normalised = address.trim().toLowerCase();
-      const { error: sendError } = await supabase.auth.signInWithOtp({ email: normalised, options: { shouldCreateUser: true } });
+      const { error: sendError } = await supabase.auth.signInWithOtp({
+        email: normalised,
+        options: { shouldCreateUser: true, emailRedirectTo: redirectTo }
+      });
       if (sendError) throw sendError;
       setEmail(normalised);
       setStep('code');
