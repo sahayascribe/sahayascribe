@@ -1,58 +1,58 @@
-# Make SahayaScribe live
+# Deploying SahayaScribe
 
-Recommended simple hosting: Render.
+The app runs on your existing Render web service and keeps the current domain.
+Data lives in Supabase.
 
-## 1. Put this folder on GitHub
+## 1. Supabase project
 
-Upload only the files inside the `sahayascribe` folder.
+1. Create a project at supabase.com (region: **Mumbai, ap-south-1**). Ideally create two:
+   `sahayascribe-dev` for testing and `sahayascribe-prod` for real users.
+2. **SQL Editor:** run the files in `supabase/migrations/` in order:
+   - `20261018000001_core_schema.sql`
+   - `20261018000002_document_storage.sql`
+3. **Authentication → Sign In / Providers → Email:** keep Email enabled. Signing in with a one-time code
+   confirms the address automatically.
+4. **Authentication → Email Templates → Magic Link:** make the email show the code, for example:
 
-Do not upload the `data` folder. It contains private student/scribe registrations and is ignored by `.gitignore`.
+   ```html
+   <h2>Your SahayaScribe sign-in code</h2>
+   <p>Enter this code to sign in: <strong>{{ .Token }}</strong></p>
+   <p>If you did not request this, you can ignore this email.</p>
+   ```
 
-## 2. Create a Render Web Service
+5. **Authentication → URL Configuration:**
+   - Site URL: `https://sahayascribe.com`
+   - Redirect URLs: `https://sahayascribe.com/**`, `https://www.sahayascribe.com/**`, `http://localhost:5173/**`
+6. **Authentication → SMTP Settings:** Supabase's built-in email sender only sends a few emails per hour and is
+   meant for testing. Before going live, connect your own SMTP provider (for example Resend, Brevo, Amazon SES or
+   Google Workspace) using an address like `no-reply@sahayascribe.com`.
+7. **Project Settings → API:** copy the **Project URL** and the **anon / publishable key**.
 
-- Choose New Web Service.
-- Connect your GitHub repository.
-- Runtime: Node.
-- Build command: `npm install`
-- Start command: `npm start`
+## 2. Render
 
-Add these environment variables:
+In your existing web service:
 
-- `HOST` = `0.0.0.0`
-- `ADMIN_PASSWORD` = your private admin password
-- `DATA_DIR` = `/var/data/sahayascribe`
+- **Build command:** `npm ci --include=dev && npm run build`
+- **Start command:** `npm start`
+- **Environment variables:**
+  - `HOST` = `0.0.0.0`
+  - `VITE_SUPABASE_URL` = your Project URL
+  - `VITE_SUPABASE_ANON_KEY` = your anon / publishable key
 
-Also add a persistent disk:
+The `VITE_` values are built into the site, so redeploy after changing them.
+The old `ADMIN_PASSWORD` and `DATA_DIR` variables and the persistent disk are no longer used.
 
-- Mount path: `/var/data`
-- Size: 1 GB is enough for the demo stage
+Your custom domain stays attached to the same service, so no DNS changes are needed.
 
-## 3. Connect your domain
+## 3. Check after deploying
 
-In Render, add these custom domains:
+- `https://sahayascribe.com` loads, and signing in with an email code works.
+- `https://sahayascribe.com/admin.html` lets only the admin emails in.
 
-- `sahayascribe.com`
-- `www.sahayascribe.com`
+## Never share
 
-Render will show DNS records. Copy those records into the DNS settings where you bought the domain.
+- the `service_role` / secret key
+- the database password
+- personal access tokens
 
-Usually this means:
-
-- one record for `sahayascribe.com`
-- one CNAME record for `www`
-
-After DNS updates, wait for propagation. It can take a few minutes, sometimes longer.
-
-## 4. Open the live site
-
-Public website:
-
-`https://sahayascribe.com`
-
-Private admin dashboard:
-
-`https://sahayascribe.com/admin.html`
-
-## Production caution
-
-This setup is suitable for a live demo / pilot. For real long-term public use, move registrations to a hosted database like PostgreSQL and add real OTP/email verification before collecting sensitive data at scale.
+These are never needed by the website.

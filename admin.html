@@ -1,52 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="noindex,nofollow">
-  <title>SahayaScribe Admin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="admin.css">
-</head>
-<body>
-  <main>
-    <section class="login-view" id="loginView">
-      <div class="login-art" aria-hidden="true"><span>Sa</span><i></i><i></i><i></i></div>
-      <form class="login-card" id="loginForm">
-        <div class="admin-badge">PRIVATE ADMIN</div>
-        <h1>Welcome back</h1>
-        <p>Sign in to view SahayaScribe registrations.</p>
-        <label>Admin password<input id="password" type="password" autocomplete="current-password" required placeholder="Enter your password"></label>
-        <p class="error" id="loginError" role="alert"></p>
-        <button type="submit">Open dashboard <span>→</span></button>
-        <small>🔒 This page is not linked from the student website.</small>
-      </form>
-    </section>
-
-    <section class="dashboard-view hidden" id="dashboardView">
-      <aside>
-        <div class="brand"><span>S</span>Sahaya<strong>Scribe</strong></div>
-        <p>ADMIN CONSOLE</p>
-        <nav><button class="active" data-tab="students">◉ Students</button><button data-tab="scribes">✎ Scribes</button></nav>
-        <button class="logout" id="logoutBtn">↪ Sign out</button>
-      </aside>
-      <div class="content">
-        <header><div><p>REGISTRATIONS</p><h1 id="pageTitle">Registered students</h1></div><div class="admin-user"><span>A</span><div><b>Administrator</b><small>Private access</small></div></div></header>
-        <div class="stats">
-          <article class="purple"><span>♿</span><div><small>Total students</small><strong id="studentCount">0</strong></div></article>
-          <article class="orange"><span>✎</span><div><small>Total scribes</small><strong id="scribeCount">0</strong></div></article>
-          <article class="green"><span>✦</span><div><small>Total registrations</small><strong id="totalCount">0</strong></div></article>
-        </div>
-        <section class="table-card">
-          <div class="table-tools"><label><span>⌕</span><input id="searchInput" type="search" placeholder="Search by name, mobile or institution"></label><button id="refreshBtn">↻ Refresh</button></div>
-          <div class="table-wrap"><table><thead id="tableHead"></thead><tbody id="tableBody"></tbody></table></div>
-          <div class="empty hidden" id="emptyState"><span>☷</span><h2>No registrations yet</h2><p>New registrations will appear here automatically.</p></div>
-        </section>
-      </div>
-    </section>
-  </main>
-  <script src="admin.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow">
+    <title>SahayaScribe Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/admin/main.jsx"></script>
+  </body>
 </html>

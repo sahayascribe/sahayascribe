@@ -1,0 +1,8 @@
+button:disabled { opacity: .65; cursor: progress; }
+.login-card .link-btn { background: none; box-shadow: none; color: var(--purple); height: auto; margin-top: 12px; text-decoration: underline; }
+.content > .error { color: #c33c4b; font-weight: 700; }
+.doc-btn { border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--purple); padding: 6px 10px; font-weight: 700; }
+.muted { color: var(--muted); }
+.chip.status-open { background: #fff0dd; color: #8a3f18; }
+.chip.status-cancelled { background: #ececec; color: #5b5b5b; }
+.admin-loading { padding: 40px; text-align: center; color: var(--muted); }
