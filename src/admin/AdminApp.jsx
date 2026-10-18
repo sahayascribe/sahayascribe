@@ -6,7 +6,7 @@ import { formatDate, formatDateTime, formatTime, friendlyError, initials } from 
 import { isConfigured, supabase } from '../lib/supabase.js';
 
 function LoginView({ message }) {
-  const { step, email, busy, error, sendCode, verifyCode, restart } = useEmailCode();
+  const { step, email, busy, error, sendCode, verifyCode, restart } = useEmailCode(`${window.location.origin}/admin.html`);
   return (
     <section className="login-view">
       <div className="login-art" aria-hidden="true"><span>Sa</span><i></i><i></i><i></i></div>
@@ -20,15 +20,15 @@ function LoginView({ message }) {
       >
         <div className="admin-badge">PRIVATE ADMIN</div>
         <h1>Welcome back</h1>
-        <p>{step === 'email' ? 'Sign in with your admin email to view SahayaScribe registrations.' : `Enter the code we sent to ${email}.`}</p>
+        <p>{step === 'email' ? 'Sign in with your admin email to view SahayaScribe registrations.' : `We emailed ${email}. Open the sign-in link, or type the code if the email shows one.`}</p>
         {step === 'email' ? (
           <label>Admin email<input key="email" name="email" type="email" autoComplete="email" required placeholder="you@sahayascribe.com" /></label>
         ) : (
-          <label>One-time code<input key="code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6,10}" required autoFocus placeholder="Code from your email" /></label>
+          <label>Code from the email<input key="code" name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6,10}" required autoFocus placeholder="Code from your email" /></label>
         )}
         <p className="error" role="alert">{message || (error ? friendlyError(error) : '')}</p>
         <button type="submit" disabled={busy || !isConfigured}>
-          {busy ? 'Please wait…' : step === 'email' ? <>Send code <span>→</span></> : <>Open dashboard <span>→</span></>}
+          {busy ? 'Please wait…' : step === 'email' ? <>Email me a sign-in link <span>→</span></> : <>Open dashboard <span>→</span></>}
         </button>
         {step === 'code' && <button type="button" className="link-btn" onClick={restart}>Use a different email</button>}
         <small>🔒 This page is not linked from the student website.</small>
