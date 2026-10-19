@@ -27,5 +27,6 @@ trap cleanup EXIT
 PSQL=("${RUN[@]}" "$PG_BIN/psql" -X -q -v ON_ERROR_STOP=1 -h "$WORK" -p "$PORT" -U postgres -d postgres)
 "${PSQL[@]}" -f "$ROOT/supabase/tests/supabase_stub.sql"
 "${PSQL[@]}" -f "$ROOT/supabase/migrations/20261018000001_core_schema.sql"
+"${PSQL[@]}" -f "$ROOT/supabase/migrations/20261019000001_notifications.sql"
 # The storage migration is applied inside the test so storage policies are exercised too.
 (cd "$ROOT/supabase/tests" && "${PSQL[@]}" -f rls_test.sql)

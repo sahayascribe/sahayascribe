@@ -5,5 +5,6 @@ dist/
 !.env.example
 *.log
 *.tmp
+supabase/.temp/
 data/
 registrations.json

@@ -8,7 +8,7 @@
 -- Helpers (created as superuser, callable by the test roles)
 -- ---------------------------------------------------------------------------
 create schema tests;
-grant usage on schema tests to anon, authenticated;
+grant usage on schema tests to anon, authenticated, service_role;
 
 create function tests.throws(p_sql text, p_expected text)
 returns void language plpgsql as $$
@@ -34,7 +34,7 @@ begin
 end;
 $$;
 
-grant execute on all functions in schema tests to anon, authenticated;
+grant execute on all functions in schema tests to anon, authenticated, service_role;
 
 -- Test users
 insert into auth.users (id, email, email_confirmed_at) values
@@ -69,6 +69,7 @@ insert into auth.users (id, email, email_confirmed_at) values
 \set as_admin 'reset role; select set_config(''request.jwt.claim.sub'', ''00000000-0000-0000-0000-0000000000ad'', false); set role authenticated;'
 \set as_fake_admin 'reset role; select set_config(''request.jwt.claim.sub'', ''00000000-0000-0000-0000-0000000000af'', false); set role authenticated;'
 \set as_super 'reset role; select set_config(''request.jwt.claim.sub'', '''', false);'
+\set as_service 'reset role; select set_config(''request.jwt.claim.sub'', '''', false); set role service_role;'
 
 \echo '1. Registration'
 :as_alice
@@ -327,5 +328,71 @@ select tests.throws($$update public.students set full_name = 'Hacked'$$, 'permis
 :as_super
 select tests.eq((select city from public.scribes where id = :'sara'), 'Mysuru', 'others cannot edit a scribe');
 select tests.eq((select full_name from public.students where id = :'alice'), 'Alice Kumar', 'others cannot edit a student');
+
+\echo '13. Booking notifications'
+-- The workflow above queued these through the exam_requests trigger.
+:as_super
+select tests.eq((select count(*) from public.notifications where request_id = :'econ' and kind = 'request_created'), 1::bigint, 'created queued');
+-- 4 accepted emails for econ (Sam and Sara, each to student and scribe), minus Sam's own, deleted with his account.
+select tests.eq((select count(*) from public.notifications where request_id = :'econ' and kind = 'request_accepted'), 3::bigint, 'accepted queued for student and scribe');
+select tests.eq((select count(*) from public.notifications where request_id = :'econ' and kind = 'scribe_withdrew' and recipient_id = :'alice'), 1::bigint, 'withdraw queued for student');
+select tests.eq((select count(*) from public.notifications where request_id = :'econ' and kind = 'request_cancelled' and recipient_id = :'sara'), 1::bigint, 'cancel queued for scribe');
+select tests.eq((select count(*) from public.notifications where request_id = :'sci' and kind = 'scribe_withdrew' and recipient_id = :'bob'), 1::bigint, 'deleted scribe counts as withdraw');
+select tests.eq((select count(*) from public.notifications where recipient_id = :'sam'), 0::bigint, 'deleted user emails removed');
+
+:as_anon
+select tests.throws('select * from public.notifications', 'permission denied');
+select tests.throws('select * from public.claim_notifications(10)', 'permission denied');
+:as_alice
+select tests.throws('select * from public.notifications', 'permission denied');
+select tests.throws('select * from public.claim_notifications(10)', 'permission denied');
+select tests.throws('select public.queue_scheduled_notifications()', 'permission denied');
+select tests.throws('select public.finish_notification(1)', 'permission denied');
+
+\echo '13a. Claiming skips out-of-date emails'
+:as_service
+create temp table claimed as select * from public.claim_notifications(100);
+-- econ is cancelled: only the cancellation email to Sara is still useful.
+-- sci is open again: Bob gets "request live" and "scribe withdrew", not the stale "accepted".
+select tests.eq((select count(*) from claimed), 3::bigint, 'three emails claimed');
+select tests.eq((select email from claimed where kind = 'request_cancelled'), 'sara@example.com', 'cancel goes to the scribe');
+select tests.eq((select data ->> 'student_name' from claimed where kind = 'request_cancelled'), 'Alice', 'cancel shows first name only');
+select tests.eq((select data ? 'student_mobile' from claimed where kind = 'request_cancelled'), false, 'cancel has no phone number');
+select tests.eq((select count(*) from claimed where kind in ('request_created', 'scribe_withdrew') and email = 'bob@example.com'), 2::bigint, 'student emails for reopened request');
+select tests.eq((select count(*) from public.claim_notifications(100)), 0::bigint, 'claimed emails are not handed out twice');
+select public.finish_notification(id, 'resend-' || id) from claimed where kind = 'request_cancelled';
+select public.finish_notification(id, null, 'Resend 500: try later') from claimed where kind <> 'request_cancelled';
+:as_super
+select tests.eq((select sent_at is not null from public.notifications where id = (select id from claimed where kind = 'request_cancelled')), true, 'success recorded');
+select tests.eq((select count(*) from public.notifications n join claimed c using (id) where n.sent_at is null and n.locked_until > now() and n.last_error like 'Resend 500%'), 2::bigint, 'failure scheduled for retry');
+select tests.eq((select count(*) from public.notifications where request_id = :'econ' and skipped_reason = 'out_of_date'), 5::bigint, 'stale econ emails skipped');
+
+\echo '13b. Scheduled reminders and rating prompts'
+:as_sara
+select public.accept_request(:'sci');
+:as_super
+update public.exam_requests set exam_date = public.today_ist() + 1 where id = :'sci';
+select tests.eq((select count(*) from public.notifications where request_id = :'sci' and kind = 'request_accepted' and scribe_id = :'sara'), 2::bigint, 'new acceptance queued');
+:as_service
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '07:00') at time zone 'Asia/Kolkata'), 0, 'no reminder before 8 AM');
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '09:00') at time zone 'Asia/Kolkata'), 2, 'reminder to student and scribe');
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '10:00') at time zone 'Asia/Kolkata'), 0, 'reminder queued once');
+:as_super
+update public.exam_requests set exam_date = public.today_ist() where id = :'sci';
+:as_service
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '11:30') at time zone 'Asia/Kolkata'), 0, 'no prompt before the exam ends');
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '12:30') at time zone 'Asia/Kolkata'), 1, 'prompt after the exam ends');
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '13:00') at time zone 'Asia/Kolkata'), 0, 'prompt queued once');
+create temp table claimed2 as select * from public.claim_notifications(100);
+select tests.eq((select data ->> 'scribe_mobile' from claimed2 where kind = 'exam_reminder' and email = 'bob@example.com'), '9100000005', 'student reminder has scribe phone');
+select tests.eq((select data ->> 'student_mobile' from claimed2 where kind = 'exam_reminder' and email = 'sara@example.com'), '9000000010', 'scribe reminder has student phone');
+select tests.eq((select data ->> 'scribe_name' from claimed2 where kind = 'rate_prompt'), 'Sara', 'prompt names the scribe');
+select tests.eq((select data ? 'scribe_mobile' and data ->> 'scribe_mobile' is null from claimed2 where kind = 'rate_prompt'), true, 'prompt has no phone number');
+:as_bob
+select public.rate_scribe(:'sci', 4::smallint);
+:as_super
+delete from public.notifications where kind = 'rate_prompt';
+:as_service
+select tests.eq(public.queue_scheduled_notifications((public.today_ist() + time '23:00') at time zone 'Asia/Kolkata'), 0, 'no prompt when already rated');
 
 \echo 'ALL RLS TESTS PASSED'

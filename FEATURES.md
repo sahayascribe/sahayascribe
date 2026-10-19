@@ -59,12 +59,23 @@ Row Level Security unless marked otherwise.
 37. **Tables** for students, scribes and exam requests, with search and refresh.
 38. **View uploaded documents** through short-lived (60-second) private links.
 
+## Booking emails (Resend)
+Sent from `notifications@notification.sahayascribe.com` within about a minute. Each email has an accessible HTML version and a plain-text version.
+
+39. **Request is live** to the student after booking.
+40. **Scribe accepted** to the student (scribe name, phone, qualification, city) and to the scribe (student name, phone, institution, centre and map link).
+41. **Scribe withdrew** to the student: the request is open again.
+42. **Exam cancelled** to the scribe when the student cancels an exam they had accepted.
+43. **Reminder** to both the day before the exam, from 8 AM India time, with the other person's phone number.
+44. **Rate your scribe** to the student once the exam has ended, if they have not rated yet.
+45. Emails that are out of date when their turn comes (for example "scribe accepted" after the scribe has already withdrawn) are skipped. Failed sends are retried up to 5 times, and Resend never sends the same email twice.
+
 ## Not built yet
 | Feature | Notes |
 |---|---|
 | Scribe ID verification by admin | Skipped for now, as decided. Scribes can browse as soon as they register. |
-| Notifications (email/SMS) when a scribe accepts or cancels | Students see changes on their dashboard. |
-| Automatic exam reminders | Needs a scheduled job and an email/SMS provider. |
+| SMS / WhatsApp notifications | Booking updates are sent by email only. |
+| Email to scribes about new eligible requests | Scribes check their dashboard. |
 | Backup / standby scribe | — |
 | In-app chat | Users call each other directly after a match. |
 | Language switcher (Kannada, Hindi, …) | The interface is English only. |

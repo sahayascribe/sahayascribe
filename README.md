@@ -4,6 +4,7 @@ Website for connecting visually impaired students with volunteer exam scribes.
 
 - **Frontend:** React + Vite (`src/`), with the public site at `/` and a private admin dashboard at `/admin.html`.
 - **Backend:** Supabase: email one-time-code login, Postgres with Row Level Security, and private document storage.
+- **Email:** Resend, for sign-in emails (as Supabase's SMTP sender) and booking emails (`supabase/functions/send-notifications`).
 - **Hosting:** Render web service (`server.js` serves the built app with security headers).
 
 See [FEATURES.md](FEATURES.md) for what the app does and [DEPLOYMENT.md](DEPLOYMENT.md) for setup.
