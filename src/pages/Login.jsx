@@ -2,38 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { dashboardPath, useAuth, useEmailCode } from '../lib/auth.jsx';
 import { friendlyError } from '../lib/format.js';
+import CodeInput, { CODE_LENGTH } from '../components/CodeInput.jsx';
 
-const CODE_LENGTH = 6;
 const RESEND_AFTER = 30;
-
-// One real input (so autofill, paste and screen readers work normally), drawn as six boxes.
-function CodeInput({ value, onChange, inputRef, disabled }) {
-  return (
-    <div className="code-input">
-      <input
-        ref={inputRef}
-        id="code"
-        name="code"
-        value={value}
-        onChange={event => onChange(event.target.value.replace(/\D/g, '').slice(0, CODE_LENGTH))}
-        required
-        disabled={disabled}
-        inputMode="numeric"
-        autoComplete="one-time-code"
-        pattern={`[0-9]{${CODE_LENGTH}}`}
-        maxLength={CODE_LENGTH}
-        aria-describedby="code-help"
-      />
-      <div className="code-boxes" aria-hidden="true">
-        {Array.from({ length: CODE_LENGTH }, (_, index) => (
-          <span key={index} className={index === Math.min(value.length, CODE_LENGTH - 1) ? 'current' : ''}>
-            {value[index] ?? ''}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export default function Login() {
   const [params] = useSearchParams();
@@ -107,7 +78,7 @@ export default function Login() {
               <button type="button" className="inline-link" onClick={restart}>Change email</button>
             </p>
             <label className="field" htmlFor="code">6-digit code</label>
-            <CodeInput value={code} onChange={changeCode} inputRef={codeInput} disabled={busy} />
+            <CodeInput value={code} onChange={changeCode} inputRef={codeInput} disabled={busy} describedBy="code-help" />
             <p id="code-help" className="field-help">The code expires in 10 minutes. You can also open the link in the email.</p>
             {error && <p className="form-error" role="alert">{friendlyError(error)}</p>}
             <button className="primary-btn block" type="submit" disabled={busy || code.length < CODE_LENGTH}>
