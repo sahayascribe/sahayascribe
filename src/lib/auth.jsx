@@ -36,7 +36,9 @@ export function AuthProvider({ children }) {
       setState({ loading: false, profile: null, isAdmin: false, error: null });
       return null;
     }
-    setState(current => ({ ...current, loading: true }));
+    // Show the loading state only when there is no profile for this user yet; refreshing
+    // an existing profile (e.g. after editing it) happens silently in the background.
+    setState(current => ({ ...current, loading: current.profile?.id !== userId }));
     try {
       const result = await fetchProfile(userId);
       setState({ loading: false, error: null, ...result });

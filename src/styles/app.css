@@ -28,3 +28,6 @@ body.large-text .request-card h2 { font-size: clamp(27px, 3.4vw, 38px); }
 .upload-box:focus-within { outline: 3px solid var(--green); outline-offset: 3px; }
 body.high-contrast .choice-pills input:focus-visible + span,
 body.high-contrast .upload-box:focus-within { outline: 4px solid #ffbf00; }
+.dash-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.profile-notice { max-width: 850px; margin: 0 auto 24px; }
+.inline-link { border: 0; background: none; padding: 0; color: var(--green); font-weight: 700; text-decoration: underline; }

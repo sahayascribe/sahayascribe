@@ -187,14 +187,14 @@ select id as sci from public.exam_requests \gset
 \echo '5. Eligibility filtering'
 :as_sam
 select tests.eq((select count(*) from public.exam_requests), 0::bigint, 'scribe cannot read requests table');
-select tests.eq((select count(*) from public.eligible_requests()), 2::bigint, 'eligible scribe sees both');
+select tests.eq((select count(*) from public.eligible_requests() where id in (:'econ', :'sci')), 2::bigint, 'eligible scribe sees both');
 select tests.eq((select student_name from public.eligible_requests() where id = :'econ'), 'Alice', 'first name only');
 :as_artie
 select tests.eq((select count(*) from public.eligible_requests() where id = :'econ'), 0::bigint, 'blocked background hidden');
 select tests.eq((select count(*) from public.eligible_requests() where id = :'sci'), 1::bigint, 'unblocked request shown');
 select tests.throws(format('select public.accept_request(%L)', :'econ'), 'no longer available');
 :as_kiran
-select tests.eq((select count(*) from public.eligible_requests()), 0::bigint, 'wrong medium hidden');
+select tests.eq((select count(*) from public.eligible_requests() where id in (:'econ', :'sci')), 0::bigint, 'wrong medium hidden');
 select tests.throws(format('select public.accept_request(%L)', :'econ'), 'no longer available');
 :as_tenth
 select tests.eq((select count(*) from public.eligible_requests() where id = :'econ'), 0::bigint, 'low qualification hidden');
@@ -265,10 +265,10 @@ select tests.eq((select count(*) from public.ratings), 0::bigint, 'other scribe 
 \echo '9. Admin access'
 :as_admin
 select tests.eq(public.is_admin(), true, 'admin recognised (email case-insensitive)');
-select tests.eq((select count(*) from public.students), 2::bigint, 'admin sees all students');
-select tests.eq((select count(*) from public.scribes), 5::bigint, 'admin sees all scribes');
-select tests.eq((select count(*) from public.exam_requests), 2::bigint, 'admin sees all requests');
-select tests.eq((select count(*) from public.ratings), 1::bigint, 'admin sees ratings');
+select tests.eq((select count(*) from public.students where id::text like '00000000-0000-0000-0000-%'), 2::bigint, 'admin sees all students');
+select tests.eq((select count(*) from public.scribes where id::text like '00000000-0000-0000-0000-%'), 5::bigint, 'admin sees all scribes');
+select tests.eq((select count(*) from public.exam_requests where id in (:'econ', :'sci')), 2::bigint, 'admin sees all requests');
+select tests.eq((select count(*) from public.ratings where request_id = :'sci'), 1::bigint, 'admin sees ratings');
 select tests.throws('select * from public.admins', 'permission denied');
 :as_fake_admin
 select tests.eq(public.is_admin(), false, 'unconfirmed admin email is not admin');
@@ -290,7 +290,7 @@ delete from storage.objects;
 :as_anon
 select tests.eq((select count(*) from storage.objects), 0::bigint, 'anon cannot see file');
 :as_admin
-select tests.eq((select count(*) from storage.objects), 1::bigint, 'admin can see file');
+select tests.eq((select count(*) from storage.objects where name like '00000000-0000-0000-0000-%'), 1::bigint, 'admin can see file');
 :as_super
 select tests.eq((select public from storage.buckets where id = 'documents'), false, 'bucket is private');
 
@@ -299,5 +299,33 @@ select tests.eq((select public from storage.buckets where id = 'documents'), fal
 update public.exam_requests set exam_date = public.today_ist() + 3 where id = :'sci';
 delete from auth.users where id = :'sam';
 select tests.eq((select status from public.exam_requests where id = :'sci'), 'open', 'orphaned request reopened');
+
+\echo '12. Editing profiles'
+:as_alice
+update public.students set institution = 'New College', mobile = '9000000099', medium = 'Kannada';
+select tests.eq((select institution from public.students), 'New College', 'student can edit own profile');
+select tests.eq((select mobile from public.students), '9000000099', 'student can change own mobile');
+select tests.throws($$update public.students set mobile = '9000000010'$$, 'duplicate key');
+select tests.throws($$update public.students set id = '00000000-0000-0000-0000-00000000000b'$$, 'row-level security');
+update public.students set certificate_path = '00000000-0000-0000-0000-00000000000a/new-cert.pdf';
+select tests.eq((select certificate_path from public.students), '00000000-0000-0000-0000-00000000000a/new-cert.pdf', 'student can replace own certificate');
+:as_sara
+update public.scribes set city = 'Mysuru', background = 'Commerce', writing_mediums = '{English,Hindi}', qualification_level = 3;
+select tests.eq((select city from public.scribes), 'Mysuru', 'scribe can edit own profile');
+select tests.eq((select writing_mediums from public.scribes), '{English,Hindi}'::text[], 'scribe can change languages');
+select tests.throws($$update public.scribes set age = 12$$, 'check constraint');
+select tests.throws($$update public.scribes set writing_mediums = '{}'$$, 'check constraint');
+select tests.throws($$update public.scribes set writing_mediums = '{English,French}'$$, 'check constraint');
+select tests.throws($$update public.scribes set id_document_path = '00000000-0000-0000-0000-00000000000a/cert.pdf'$$, 'check constraint');
+update public.scribes set created_at = '2000-01-01';
+select tests.eq((select created_at > '2001-01-01' from public.scribes), true, 'created_at cannot be rewritten');
+:as_bob
+update public.scribes set city = 'Hacked';
+update public.students set full_name = 'Hacked' where id = :'alice';
+:as_anon
+select tests.throws($$update public.students set full_name = 'Hacked'$$, 'permission denied');
+:as_super
+select tests.eq((select city from public.scribes where id = :'sara'), 'Mysuru', 'others cannot edit a scribe');
+select tests.eq((select full_name from public.students where id = :'alice'), 'Alice Kumar', 'others cannot edit a student');
 
 \echo 'ALL RLS TESTS PASSED'

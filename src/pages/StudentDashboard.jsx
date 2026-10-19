@@ -136,7 +136,10 @@ export default function StudentDashboard() {
           <h1 id="dashboard-title" tabIndex={-1}>{greeting()}, {firstName(profile.full_name)}</h1>
           <p>Ready for your next exam?</p>
         </div>
-        <Link className="primary-btn button-link" to="/student/book">+ Book a Scribe</Link>
+        <div className="dash-actions">
+          <Link className="outline-btn button-link" to="/student/profile">My profile</Link>
+          <Link className="primary-btn button-link" to="/student/book">+ Book a Scribe</Link>
+        </div>
       </div>
 
       <div className="feature-grid">

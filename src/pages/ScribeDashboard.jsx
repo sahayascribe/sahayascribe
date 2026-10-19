@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { DateBadge, RequestFacts } from '../components/RequestDetails.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { useAuth } from '../lib/auth.jsx';
@@ -99,7 +100,10 @@ export default function ScribeDashboard() {
           <h1 id="scribe-requests-title" tabIndex={-1}>Hello {firstName(profile.full_name)}, choose an exam to help with</h1>
           <p>Only requests that match your profile and eligibility rules are shown here.</p>
         </div>
-        <button className="primary-btn coral-btn" type="button" onClick={load}>Refresh list</button>
+        <div className="dash-actions">
+          <Link className="outline-btn button-link" to="/scribe/profile">My profile</Link>
+          <button className="primary-btn coral-btn" type="button" onClick={load}>Refresh list</button>
+        </div>
       </div>
 
       <div className="notice blue"><b aria-hidden="true">i</b><p><strong>You choose</strong> Pick the exam you want to accept. If a student blocks your background, or the time clashes with an exam you already accepted, it will not appear here.</p></div>

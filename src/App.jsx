@@ -5,6 +5,7 @@ import { ToastProvider } from './components/Toast.jsx';
 import { AuthProvider } from './lib/auth.jsx';
 import BookScribe from './pages/BookScribe.jsx';
 import Login from './pages/Login.jsx';
+import Profile from './pages/Profile.jsx';
 import ScribeDashboard from './pages/ScribeDashboard.jsx';
 import ScribeRegister from './pages/ScribeRegister.jsx';
 import StudentDashboard from './pages/StudentDashboard.jsx';
@@ -30,7 +31,9 @@ export default function App() {
               <Route path="student/registered" element={student(<StudentRegistered />)} />
               <Route path="student/book" element={student(<BookScribe />)} />
               <Route path="student/requested" element={student(<RequestSent />)} />
+              <Route path="student/profile" element={student(<Profile />)} />
               <Route path="scribe" element={scribe(<ScribeDashboard />)} />
+              <Route path="scribe/profile" element={scribe(<Profile />)} />
               <Route path="scribe/registered" element={scribe(<ScribeRegistered />)} />
               <Route path="*" element={<NotFound />} />
             </Route>
