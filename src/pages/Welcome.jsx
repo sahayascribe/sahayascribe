@@ -1,21 +1,30 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { dashboardPath, useAuth } from '../lib/auth.jsx';
 
+const Chevron = () => (
+  <svg className="role-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5" /></svg>
+);
+
 // A sample confirmed booking, drawn the same way as the real ones on the dashboard.
-function SampleTicket() {
+function SampleBooking() {
   return (
     <figure className="sample-ticket" aria-hidden="true">
-      <div className="request-card ticket status-accepted">
+      <div className="request-card status-accepted">
         <div className="request-card-head">
-          <span className="request-status">Scribe confirmed</span>
-          <h2>Financial Accounting</h2>
-          <p>Mount Carmel College, Block B</p>
-        </div>
-        <div className="date-badge">
-          <span className="date-weekday">Thu</span>
-          <strong className="date-day">22</strong>
-          <span className="date-month">Oct 2026</span>
-          <span className="date-time">10:00 am – 1:00 pm</span>
+          <div className="date-badge">
+            <span className="date-month">Oct</span>
+            <strong className="date-day">22</strong>
+            <span className="date-weekday">Thu</span>
+          </div>
+          <div>
+            <span className="request-status">Scribe confirmed</span>
+            <h2>Financial Accounting</h2>
+            <p>Mount Carmel College, Block B</p>
+            <p className="request-time">
+              <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" /><path d="M8 4.5V8l2.5 1.5" /></svg>
+              10:00 am – 1:00 pm
+            </p>
+          </div>
         </div>
         <div className="ticket-body">
           <div className="profile-row match-row">
@@ -58,29 +67,35 @@ export default function Welcome() {
           </p>
 
           {profile ? (
-            <div className="role-choices">
-              <button className="role-card" type="button" onClick={() => navigate(dashboardPath(profile))}>
-                <strong>Open my dashboard</strong>
-                <small>{profile.role === 'student' ? 'Book and track your scribes' : 'Find exams you can help with'}</small>
-              </button>
+            <div className="welcome-actions">
+              <Link className="primary-btn button-link" to={dashboardPath(profile)}>Open my dashboard</Link>
+              <span className="muted">{profile.role === 'student' ? 'Book and track your scribes' : 'Find exams you can help with'}</span>
             </div>
           ) : (
             <>
               <div className="role-choices" role="group" aria-label="Choose how you will use SahayaScribe">
-                <button className="role-card student-card" type="button" onClick={() => choose('student')}>
+                <button className="role-card" type="button" onClick={() => choose('student')}>
+                  <span className="role-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M4 5h11a3 3 0 0 1 3 3v11H7a3 3 0 0 1-3-3Z" /><path d="M8 9h6M8 13h4" /></svg>
+                  </span>
                   <strong>I need a scribe</strong>
                   <small>Book a volunteer for an upcoming exam</small>
+                  <Chevron />
                 </button>
-                <button className="role-card scribe-card" type="button" onClick={() => choose('scribe')}>
+                <button className="role-card" type="button" onClick={() => choose('scribe')}>
+                  <span className="role-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="m15 4 5 5L9 20H4v-5Z" /><path d="m13 6 5 5" /></svg>
+                  </span>
                   <strong>I want to volunteer</strong>
                   <small>Write exams for students who need help</small>
+                  <Chevron />
                 </button>
               </div>
               {!user && <p className="signin">Already registered? <button type="button" onClick={() => navigate('/login')}>Sign in</button></p>}
             </>
           )}
         </div>
-        <SampleTicket />
+        <SampleBooking />
       </div>
 
       <section className="how-it-works" aria-labelledby="how-title">

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { DateBadge, RequestFacts } from '../components/RequestDetails.jsx';
+import { RequestFacts, RequestHead } from '../components/RequestDetails.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { firstName, friendlyError, greeting, initials, mapsUrl, todayIST } from '../lib/format.js';
@@ -67,13 +67,12 @@ function RequestCard({ request, onChange }) {
   };
 
   return (
-    <article className={`request-card ticket status-${request.status}${!upcoming && request.status === 'open' ? ' status-missed' : ''}`}>
-      <div className="request-card-head">
-        <span className="request-status">{upcoming || request.status !== 'open' ? STATUS_LABELS[request.status] : 'No scribe found'}</span>
-        <h2>{request.subject}</h2>
-        <p>{request.centre_name}</p>
-      </div>
-      <DateBadge request={request} />
+    <article className={`request-card status-${request.status}${!upcoming && request.status === 'open' ? ' status-missed' : ''}`}>
+      <RequestHead
+        request={request}
+        status={upcoming || request.status !== 'open' ? STATUS_LABELS[request.status] : 'No scribe found'}
+        subtitle={request.centre_name}
+      />
       <div className="ticket-body">
 
       {accepted && (

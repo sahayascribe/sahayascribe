@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { DateBadge, RequestFacts } from '../components/RequestDetails.jsx';
+import { RequestFacts, RequestHead } from '../components/RequestDetails.jsx';
 import { useToast } from '../components/Toast.jsx';
 import { useAuth } from '../lib/auth.jsx';
 import { firstName, friendlyError, mapsUrl } from '../lib/format.js';
@@ -21,15 +21,10 @@ function AssignmentCard({ exam, onChange }) {
   };
 
   return (
-    <article className="request-card ticket status-accepted">
-      <div className="request-card-head">
-        <span className="request-status">You are writing this exam</span>
-        <h2>{exam.subject}</h2>
-        <p>{exam.student_name}, {exam.institution}</p>
-      </div>
-      <DateBadge request={exam} />
+    <article className="request-card status-accepted">
+      <RequestHead request={exam} status="You are writing this exam" subtitle={`For ${exam.student_name}, ${exam.institution}`} />
       <div className="ticket-body">
-        <RequestFacts request={exam} extra={[['Student phone', exam.student_mobile]]} />
+        <RequestFacts request={exam} extra={[['Exam centre', exam.centre_name], ['Student phone', exam.student_mobile]]} />
         <div className="button-row">
           <a className="primary-btn button-link" href={`tel:+91${exam.student_mobile}`}>Call student</a>
           <a className="outline-btn button-link" href={mapsUrl(exam.centre_address)} target="_blank" rel="noopener noreferrer">View on map</a>
@@ -57,15 +52,10 @@ function OpenRequestCard({ request, onAccepted }) {
   };
 
   return (
-    <article className="request-card ticket status-open">
-      <div className="request-card-head">
-        <span className="request-status">Needs a scribe</span>
-        <h2>{request.subject}</h2>
-        <p>{request.student_name}, {request.institution}</p>
-      </div>
-      <DateBadge request={request} />
+    <article className="request-card status-open">
+      <RequestHead request={request} status="Needs a scribe" subtitle={`For ${request.student_name}, ${request.institution}`} />
       <div className="ticket-body">
-        <RequestFacts request={request} />
+        <RequestFacts request={request} extra={[['Exam centre', request.centre_name]]} />
         <div className="button-row">
           <button className="primary-btn" type="button" onClick={accept} disabled={busy}>{busy ? 'Accepting…' : 'Accept this exam'}</button>
           <a className="outline-btn button-link" href={mapsUrl(request.centre_address)} target="_blank" rel="noopener noreferrer">View on map</a>

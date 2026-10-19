@@ -3,7 +3,8 @@ import { dashboardPath, useAuth } from '../lib/auth.jsx';
 
 export function Loading({ label = 'Loading…' }) {
   return (
-    <section className="screen active success-screen" aria-busy="true">
+    <section className="screen active loading-screen" aria-busy="true">
+      <span className="spinner" aria-hidden="true" />
       <h1 tabIndex={-1}>{label}</h1>
     </section>
   );
