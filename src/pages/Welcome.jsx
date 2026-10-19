@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { dashboardPath, useAuth } from '../lib/auth.jsx';
 
@@ -5,11 +6,42 @@ const Chevron = () => (
   <svg className="role-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5" /></svg>
 );
 
-// A sample confirmed booking, drawn the same way as the real ones on the dashboard.
+const SAMPLES = {
+  student: {
+    title: 'What a student sees',
+    status: 'Scribe confirmed',
+    subtitle: 'Mount Carmel College, Block B',
+    person: { initials: 'KS', name: 'Karthik Shetty', detail: 'BCom, Bengaluru' },
+    facts: [['Question paper language', 'English'], ['Scribe phone', '99001 12233']],
+    action: 'Call scribe',
+    caption: 'Once a scribe accepts, the student sees who is coming and can call them.'
+  },
+  scribe: {
+    title: 'What a scribe sees',
+    status: 'You are writing this exam',
+    subtitle: 'For Ananya Rao, Mount Carmel College',
+    person: { initials: 'AR', name: 'Ananya Rao', detail: 'Semester 4 student' },
+    facts: [['Centre address', '58 Palace Road, Bengaluru'], ['Student phone', '98450 12345']],
+    action: 'Call student',
+    caption: 'The scribe sees the exam centre and the student’s number, and gets a reminder the day before.'
+  }
+};
+
+// An example confirmed booking, shown from the student's or the scribe's side.
 function SampleBooking() {
+  const [view, setView] = useState('student');
+  const sample = SAMPLES[view];
   return (
-    <figure className="sample-ticket" aria-hidden="true">
-      <div className="request-card status-accepted">
+    <figure className="sample-ticket">
+      <div className="sample-head">
+        <p className="sample-title">Example booking</p>
+        <div className="sample-switch" role="group" aria-label="Show the example for">
+          {[['student', 'Student'], ['scribe', 'Scribe']].map(([key, label]) => (
+            <button key={key} type="button" aria-pressed={view === key} onClick={() => setView(key)}>{label}</button>
+          ))}
+        </div>
+      </div>
+      <div className="request-card status-accepted" aria-hidden="true">
         <div className="request-card-head">
           <div className="date-badge">
             <span className="date-month">Oct</span>
@@ -17,9 +49,9 @@ function SampleBooking() {
             <span className="date-weekday">Thu</span>
           </div>
           <div>
-            <span className="request-status">Scribe confirmed</span>
+            <span className="request-status">{sample.status}</span>
             <h2>Financial Accounting</h2>
-            <p>Mount Carmel College, Block B</p>
+            <p>{sample.subtitle}</p>
             <p className="request-time">
               <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" /><path d="M8 4.5V8l2.5 1.5" /></svg>
               10:00 am – 1:00 pm
@@ -28,19 +60,19 @@ function SampleBooking() {
         </div>
         <div className="ticket-body">
           <div className="profile-row match-row">
-            <div className="avatar">KS</div>
+            <div className="avatar">{sample.person.initials}</div>
             <div>
-              <h3>Karthik Shetty</h3>
-              <p>BCom, Bengaluru</p>
+              <h3>{sample.person.name}</h3>
+              <p>{sample.person.detail}</p>
             </div>
           </div>
           <dl className="facts">
-            <div><dt>Question paper language</dt><dd>English</dd></div>
-            <div><dt>Scribe phone</dt><dd>99001 12233</dd></div>
+            {sample.facts.map(([term, value]) => <div key={term}><dt>{term}</dt><dd>{value}</dd></div>)}
           </dl>
+          <div className="button-row"><span className="primary-btn">{sample.action}</span></div>
         </div>
       </div>
-      <figcaption>A confirmed booking. Both of you get each other’s number.</figcaption>
+      <figcaption aria-live="polite"><strong>{sample.title}.</strong> {sample.caption}</figcaption>
     </figure>
   );
 }
