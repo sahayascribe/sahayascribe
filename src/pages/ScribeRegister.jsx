@@ -40,21 +40,20 @@ export default function ScribeRegister() {
   return (
     <section className="screen active form-screen" aria-labelledby="scribe-reg-title">
       <div className="form-heading">
-        <Link className="back-btn" to="/">← Back</Link>
-        <span className="kicker coral">SCRIBE REGISTRATION</span>
+        <Link className="back-btn" to="/">Back</Link>
         <h1 id="scribe-reg-title" tabIndex={-1}>Volunteer your time</h1>
         <p>A few details help students find the right scribe for their exam.</p>
       </div>
       <form className="form-card" onSubmit={handleSubmit}>
         <div className="form-grid">
           <ScribeFields />
-          <FileField required label="Upload ID for verification *" hint="College ID or masked Aadhaar · PDF, JPG or PNG up to 5 MB · Only admins can see it" onChange={setIdDocument} />
+          <FileField required label="ID document *" hint="College ID or masked Aadhaar. PDF, JPG or PNG up to 5 MB. Only admins can see it." onChange={setIdDocument} />
         </div>
         <label className="check-row"><input required type="checkbox" /><span>I agree to volunteer as a scribe for visually impaired students.</span></label>
         <p className="hint">Your mobile number is shared only with students whose exams you accept.</p>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-btn coral-btn" type="submit" disabled={busy}>
-          {busy ? 'Saving registration…' : <>Register as Scribe <span aria-hidden="true">→</span></>}
+          {busy ? 'Saving registration…' : 'Create scribe profile'}
         </button>
       </form>
     </section>

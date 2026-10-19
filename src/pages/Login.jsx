@@ -28,13 +28,12 @@ export default function Login() {
   return (
     <section className="screen active form-screen" aria-labelledby="login-title">
       <div className="form-heading">
-        <Link className="back-btn" to="/">← Back</Link>
-        <span className={`kicker${coral ? ' coral' : ''}`}>{as ? `${as.toUpperCase()} SIGN IN` : 'SIGN IN'}</span>
+        <Link className="back-btn" to="/">Back</Link>
         <h1 id="login-title" tabIndex={-1}>{step === 'email' ? 'Sign in with your email' : 'Check your email'}</h1>
         <p>
           {step === 'email'
-            ? 'We will email you a sign-in link. No password needed. New here? The same email creates your account.'
-            : `We sent an email to ${email}. Open the sign-in link in it, or type the code if the email shows one. It expires in 10 minutes.`}
+            ? 'We will email you a 6-digit code. No password needed. New here? The same email creates your account.'
+            : `We sent an email to ${email}. Type the 6-digit code from it, or open the link. The code expires in 10 minutes.`}
         </p>
       </div>
 
@@ -47,7 +46,7 @@ export default function Login() {
           </div>
           {error && <p className="form-error" role="alert">{friendlyError(error)}</p>}
           <button className={`primary-btn${coral ? ' coral-btn' : ''}`} type="submit" disabled={busy}>
-            {busy ? 'Sending…' : <>Email me a sign-in link <span aria-hidden="true">→</span></>}
+            {busy ? 'Sending…' : 'Email me a sign-in code'}
           </button>
         </form>
       ) : (
@@ -59,7 +58,7 @@ export default function Login() {
           </div>
           {error && <p className="form-error" role="alert">{friendlyError(error)}</p>}
           <button className={`primary-btn${coral ? ' coral-btn' : ''}`} type="submit" disabled={busy}>
-            {busy ? 'Checking…' : <>Verify and continue <span aria-hidden="true">→</span></>}
+            {busy ? 'Checking…' : 'Sign in'}
           </button>
           <p className="signin">Wrong email or nothing arrived? Check your spam folder, or <button type="button" onClick={restart}>start again</button></p>
         </form>

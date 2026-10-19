@@ -38,21 +38,20 @@ export default function StudentRegister() {
   return (
     <section className="screen active form-screen" aria-labelledby="student-reg-title">
       <div className="form-heading">
-        <Link className="back-btn" to="/">← Back</Link>
-        <span className="kicker">STUDENT REGISTRATION</span>
+        <Link className="back-btn" to="/">Back</Link>
         <h1 id="student-reg-title" tabIndex={-1}>Tell us about yourself</h1>
         <p>This helps us find the right scribe for you. Fields marked * are required.</p>
       </div>
       <form className="form-card" onSubmit={handleSubmit}>
         <div className="form-grid">
           <StudentFields />
-          <FileField label="Upload Disability Certificate" hint="Optional, but recommended · PDF, JPG or PNG up to 5 MB · Only admins can see it" onChange={setCertificate} />
+          <FileField label="Disability certificate" hint="Optional but recommended. PDF, JPG or PNG up to 5 MB. Only admins can see it." onChange={setCertificate} />
         </div>
         <label className="check-row"><input required type="checkbox" /><span>I confirm that I require a scribe for examinations.</span></label>
         <p className="hint">Your mobile number is shared only with the scribe who accepts your exam.</p>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className="primary-btn" type="submit" disabled={busy}>
-          {busy ? 'Saving registration…' : <>Register as Student <span aria-hidden="true">→</span></>}
+          {busy ? 'Saving registration…' : 'Create student profile'}
         </button>
       </form>
     </section>

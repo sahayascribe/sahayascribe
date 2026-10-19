@@ -103,8 +103,7 @@ export default function Profile() {
   return (
     <section className="screen active form-screen" aria-labelledby="profile-title">
       <div className="form-heading">
-        <Link className="back-btn" to={dashboard}>← Dashboard</Link>
-        <span className={`kicker${config.coral ? ' coral' : ''}`}>{profile.role === 'student' ? 'STUDENT' : 'SCRIBE'} PROFILE</span>
+        <Link className="back-btn" to={dashboard}>Back to dashboard</Link>
         <h1 id="profile-title" tabIndex={-1}>My profile</h1>
         <p>Keep your details up to date. Signed in as {user.email}.</p>
       </div>
@@ -125,7 +124,7 @@ export default function Profile() {
           <Fields profile={profile} />
           <FileField
             label={`Replace ${config.documentLabel}`}
-            hint="Optional · PDF, JPG or PNG up to 5 MB · Only admins can see it"
+            hint="Optional. PDF, JPG or PNG up to 5 MB. Only admins can see it."
             onChange={setNewDocument}
           />
         </div>
@@ -137,7 +136,7 @@ export default function Profile() {
         </p>
         {error && <p className="form-error" role="alert">{error}</p>}
         <button className={`primary-btn${config.coral ? ' coral-btn' : ''}`} type="submit" disabled={busy}>
-          {busy ? 'Saving…' : <>Save changes <span aria-hidden="true">→</span></>}
+          {busy ? 'Saving…' : 'Save changes'}
         </button>
       </form>
     </section>

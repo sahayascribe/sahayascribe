@@ -42,7 +42,7 @@ function RatingForm({ request, onRated }) {
         ))}
       </div>
       <textarea name="feedback" aria-label="Optional feedback" rows={3} maxLength={1000} placeholder="Share a few words (optional)" />
-      <button className="primary-btn" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Submit Rating'}</button>
+      <button className="primary-btn" type="submit" disabled={busy}>{busy ? 'Saving…' : 'Submit rating'}</button>
     </form>
   );
 }
@@ -67,25 +67,24 @@ function RequestCard({ request, onChange }) {
   };
 
   return (
-    <article className={`request-card status-${request.status}`}>
+    <article className={`request-card ticket status-${request.status}${!upcoming && request.status === 'open' ? ' status-missed' : ''}`}>
       <div className="request-card-head">
-        <div>
-          <span className="request-status">{upcoming || request.status !== 'open' ? STATUS_LABELS[request.status] : 'No scribe found'}</span>
-          <h2>{request.subject}</h2>
-          <p>{request.centre_name}</p>
-        </div>
-        <DateBadge request={request} />
+        <span className="request-status">{upcoming || request.status !== 'open' ? STATUS_LABELS[request.status] : 'No scribe found'}</span>
+        <h2>{request.subject}</h2>
+        <p>{request.centre_name}</p>
       </div>
+      <DateBadge request={request} />
+      <div className="ticket-body">
 
       {accepted && (
         <div className="profile-row match-row">
           <div className="avatar">{initials(request.scribe_name)}</div>
           <div>
             <h3>{request.scribe_name}</h3>
-            <p>{request.scribe_qualification} · {request.scribe_city}</p>
+            <p>{request.scribe_qualification}, {request.scribe_city}</p>
             {request.scribe_rating_count > 0 && (
               <div className="stars" aria-label={`${request.scribe_rating} out of 5 stars from ${request.scribe_rating_count} ratings`}>
-                ★ <small>{request.scribe_rating} ({request.scribe_rating_count})</small>
+                <span aria-hidden="true">★</span> {request.scribe_rating} <small>({request.scribe_rating_count} ratings)</small>
               </div>
             )}
           </div>
@@ -97,7 +96,7 @@ function RequestCard({ request, onChange }) {
       {request.status !== 'cancelled' && upcoming && (
         <div className="button-row">
           {accepted
-            ? <a className="primary-btn button-link" href={`tel:+91${request.scribe_mobile}`}>☎ Call scribe</a>
+            ? <a className="primary-btn button-link" href={`tel:+91${request.scribe_mobile}`}>Call scribe</a>
             : <a className="outline-btn button-link" href={mapsUrl(request.centre_address)} target="_blank" rel="noopener noreferrer">View location</a>}
           <button className="danger-link" type="button" onClick={cancel} disabled={busy}>{busy ? 'Cancelling…' : 'Cancel request'}</button>
         </div>
@@ -106,6 +105,7 @@ function RequestCard({ request, onChange }) {
       {accepted && !upcoming && (request.my_rating
         ? <p className="hint">You rated this scribe {request.my_rating} out of 5. Thank you!</p>
         : <RatingForm request={request} onRated={onChange} />)}
+      </div>
     </article>
   );
 }
@@ -132,34 +132,27 @@ export default function StudentDashboard() {
     <section className="screen active dashboard" aria-labelledby="dashboard-title">
       <div className="dash-head">
         <div>
-          <span className="kicker">STUDENT DASHBOARD</span>
           <h1 id="dashboard-title" tabIndex={-1}>{greeting()}, {firstName(profile.full_name)}</h1>
-          <p>Ready for your next exam?</p>
+          <p>Your exam bookings and the scribes who accepted them.</p>
         </div>
         <div className="dash-actions">
           <Link className="outline-btn button-link" to="/student/profile">My profile</Link>
-          <Link className="primary-btn button-link" to="/student/book">+ Book a Scribe</Link>
+          <Link className="primary-btn button-link" to="/student/book">Book a scribe</Link>
         </div>
       </div>
 
-      <div className="feature-grid">
-        <article><span aria-hidden="true">⌁</span><h2>Eligibility rules</h2><p>Only scribes who match your language, qualification and background rules can see your exam.</p></article>
-        <article><span aria-hidden="true">♢</span><h2>ID on file</h2><p>Every volunteer uploads an ID document when they register.</p></article>
-        <article><span aria-hidden="true">↻</span><h2>Private contacts</h2><p>Phone numbers are shared only between you and the scribe who accepts.</p></article>
-      </div>
-
-      <div className="notice"><b aria-hidden="true">!</b><p><strong>Cancellation policy</strong> Please cancel at least 12 hours before the exam so your scribe can plan.</p></div>
-
-      {error && <p className="form-error" role="alert">{error}</p>}
-      <h2 className="section-title">Upcoming exams</h2>
+      <div className="dash-layout">
+        <div className="dash-main">
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <h2 className="section-title">Upcoming exams</h2>
       <div className="request-list" aria-live="polite" aria-busy={requests === null}>
         {requests === null ? (
-          <div className="empty-card compact"><span aria-hidden="true">⌛</span><h2>Loading your requests…</h2></div>
+          <div className="empty-card compact"><h2>Loading your requests…</h2></div>
         ) : upcoming.length ? (
           upcoming.map(request => <RequestCard key={request.id} request={request} onChange={load} />)
         ) : (
           <div className="empty-card compact">
-            <span aria-hidden="true">☷</span><h2>No upcoming exams</h2>
+            <h2>No upcoming exams</h2>
             <p>Book a scribe and your request will appear here.</p>
             <Link className="outline-btn button-link" to="/student/book">Book your first scribe</Link>
           </div>
@@ -172,6 +165,23 @@ export default function StudentDashboard() {
           <div className="request-list">{past.map(request => <RequestCard key={request.id} request={request} onChange={load} />)}</div>
         </>
       )}
+        </div>
+
+        <aside className="dash-aside" aria-label="About your bookings">
+          <div className="aside-block">
+            <h2>Cancelling</h2>
+            <p>Please cancel at least 12 hours before the exam so your scribe can plan their day.</p>
+          </div>
+          <div className="aside-block">
+            <h2>Who can see your exam</h2>
+            <ul>
+              <li>Only scribes who meet your language, qualification and background rules.</li>
+              <li>Every volunteer uploads an ID when they register.</li>
+              <li>Phone numbers are shared only between you and the scribe who accepts.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
     </section>
   );
 }

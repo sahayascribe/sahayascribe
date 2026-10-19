@@ -12,7 +12,6 @@ export function Loading({ label = 'Loading…' }) {
 export function LoadError({ error }) {
   return (
     <section className="screen active success-screen">
-      <span className="kicker coral">SOMETHING WENT WRONG</span>
       <h1 tabIndex={-1}>We could not load your account</h1>
       <p>{error?.message || 'Please check your connection and refresh the page.'}</p>
     </section>

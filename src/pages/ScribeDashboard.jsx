@@ -21,21 +21,21 @@ function AssignmentCard({ exam, onChange }) {
   };
 
   return (
-    <article className="request-card">
+    <article className="request-card ticket status-accepted">
       <div className="request-card-head">
-        <div>
-          <span className="request-status accepted">You are writing this exam</span>
-          <h2>{exam.subject}</h2>
-          <p>{exam.student_name} • {exam.institution}</p>
+        <span className="request-status">You are writing this exam</span>
+        <h2>{exam.subject}</h2>
+        <p>{exam.student_name}, {exam.institution}</p>
+      </div>
+      <DateBadge request={exam} />
+      <div className="ticket-body">
+        <RequestFacts request={exam} extra={[['Student phone', exam.student_mobile]]} />
+        <div className="button-row">
+          <a className="primary-btn button-link" href={`tel:+91${exam.student_mobile}`}>Call student</a>
+          <a className="outline-btn button-link" href={mapsUrl(exam.centre_address)} target="_blank" rel="noopener noreferrer">View on map</a>
+          <button className="danger-link" type="button" onClick={withdraw} disabled={busy}>{busy ? 'Withdrawing…' : 'I can no longer attend'}</button>
         </div>
-        <DateBadge request={exam} />
       </div>
-      <RequestFacts request={exam} extra={[['Student phone', exam.student_mobile]]} />
-      <div className="button-row">
-        <a className="primary-btn coral-btn button-link" href={`tel:+91${exam.student_mobile}`}>☎ Contact student</a>
-        <a className="outline-btn button-link" href={mapsUrl(exam.centre_address)} target="_blank" rel="noopener noreferrer">⌖ View location</a>
-      </div>
-      <button className="danger-link" type="button" onClick={withdraw} disabled={busy}>{busy ? 'Withdrawing…' : 'I can no longer attend'}</button>
     </article>
   );
 }
@@ -57,19 +57,19 @@ function OpenRequestCard({ request, onAccepted }) {
   };
 
   return (
-    <article className="request-card">
+    <article className="request-card ticket status-open">
       <div className="request-card-head">
-        <div>
-          <span className="request-status">Open request</span>
-          <h2>{request.subject}</h2>
-          <p>{request.student_name} • {request.institution}</p>
-        </div>
-        <DateBadge request={request} />
+        <span className="request-status">Needs a scribe</span>
+        <h2>{request.subject}</h2>
+        <p>{request.student_name}, {request.institution}</p>
       </div>
-      <RequestFacts request={request} />
-      <div className="button-row">
-        <button className="primary-btn coral-btn" type="button" onClick={accept} disabled={busy}>{busy ? 'Accepting…' : 'Accept this exam'}</button>
-        <a className="outline-btn button-link" href={mapsUrl(request.centre_address)} target="_blank" rel="noopener noreferrer">View location</a>
+      <DateBadge request={request} />
+      <div className="ticket-body">
+        <RequestFacts request={request} />
+        <div className="button-row">
+          <button className="primary-btn" type="button" onClick={accept} disabled={busy}>{busy ? 'Accepting…' : 'Accept this exam'}</button>
+          <a className="outline-btn button-link" href={mapsUrl(request.centre_address)} target="_blank" rel="noopener noreferrer">View on map</a>
+        </div>
       </div>
     </article>
   );
@@ -96,19 +96,18 @@ export default function ScribeDashboard() {
     <section className="screen active dashboard" aria-labelledby="scribe-requests-title">
       <div className="dash-head">
         <div>
-          <span className="kicker coral">SCRIBE DASHBOARD</span>
-          <h1 id="scribe-requests-title" tabIndex={-1}>Hello {firstName(profile.full_name)}, choose an exam to help with</h1>
-          <p>Only requests that match your profile and eligibility rules are shown here.</p>
+          <h1 id="scribe-requests-title" tabIndex={-1}>Hello, {firstName(profile.full_name)}</h1>
+          <p>Choose an exam you can write. Only requests that match your profile are shown.</p>
         </div>
         <div className="dash-actions">
           <Link className="outline-btn button-link" to="/scribe/profile">My profile</Link>
-          <button className="primary-btn coral-btn" type="button" onClick={load}>Refresh list</button>
+          <button className="primary-btn" type="button" onClick={load}>Refresh list</button>
         </div>
       </div>
 
-      <div className="notice blue"><b aria-hidden="true">i</b><p><strong>You choose</strong> Pick the exam you want to accept. If a student blocks your background, or the time clashes with an exam you already accepted, it will not appear here.</p></div>
-
-      {error && <p className="form-error" role="alert">{error}</p>}
+      <div className="dash-layout">
+        <div className="dash-main">
+          {error && <p className="form-error" role="alert">{error}</p>}
 
       {assignments?.length > 0 && (
         <>
@@ -120,12 +119,33 @@ export default function ScribeDashboard() {
       <h2 className="section-title">Exams you can help with</h2>
       <div className="request-list" aria-live="polite" aria-busy={openRequests === null}>
         {openRequests === null ? (
-          <div className="empty-card compact"><span aria-hidden="true">⌛</span><h2>Loading eligible exams…</h2><p>Checking medium, qualification and background rules.</p></div>
+          <div className="empty-card compact"><h2>Loading eligible exams…</h2><p>Checking language, qualification and background rules.</p></div>
         ) : openRequests.length ? (
           openRequests.map(request => <OpenRequestCard key={request.id} request={request} onAccepted={load} />)
         ) : (
-          <div className="empty-card compact"><span aria-hidden="true">☷</span><h2>No exams to show</h2><p>No eligible open requests right now. New exams will appear here when students submit them.</p></div>
+          <div className="empty-card compact"><h2>No exams to show</h2><p>No open requests match your profile right now. New exams appear here as students book them.</p></div>
         )}
+      </div>
+        </div>
+
+        <aside className="dash-aside" aria-label="About choosing exams">
+          <div className="aside-block">
+            <h2>You choose</h2>
+            <p>Nothing is assigned to you automatically. Accept only exams you are sure you can attend.</p>
+          </div>
+          <div className="aside-block">
+            <h2>Why an exam may be missing</h2>
+            <ul>
+              <li>The student blocked your background or needs a higher qualification.</li>
+              <li>You cannot write the question paper language.</li>
+              <li>It clashes with an exam you already accepted.</li>
+            </ul>
+          </div>
+          <div className="aside-block">
+            <h2>If plans change</h2>
+            <p>Withdraw as early as you can. The student is emailed and the exam opens for other scribes.</p>
+          </div>
+        </aside>
       </div>
     </section>
   );

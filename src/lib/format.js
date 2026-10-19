@@ -6,6 +6,16 @@ export function formatDate(value) {
   return new Date(`${value}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
+// A YYYY-MM-DD date split for the ticket stub: { weekday: 'Tue', day: '22', monthYear: 'Oct 2026' }.
+export function dateParts(value) {
+  const date = new Date(`${value}T00:00:00`);
+  return {
+    weekday: date.toLocaleDateString('en-IN', { weekday: 'short' }),
+    day: date.toLocaleDateString('en-IN', { day: 'numeric' }),
+    monthYear: date.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
+  };
+}
+
 export function formatTime(value) {
   if (!value) return '';
   const [hours, minutes] = value.split(':').map(Number);

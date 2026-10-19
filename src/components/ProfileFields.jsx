@@ -17,11 +17,11 @@ const mobileProps = {
 export function StudentFields({ profile = {} }) {
   return (
     <>
-      <label>Full Name *<input name="fullName" required minLength={2} maxLength={120} autoComplete="name" placeholder="Enter your full name" defaultValue={profile.full_name} /></label>
-      <label>Mobile Number *<input {...mobileProps} defaultValue={profile.mobile} /></label>
-      <label>School / College *<input name="institution" required minLength={2} maxLength={160} placeholder="Name of institution" defaultValue={profile.institution} /></label>
-      <label>Semester / Year *<input name="semesterYear" required maxLength={40} placeholder="e.g. Semester 4" defaultValue={profile.semester_year} /></label>
-      <label className="full">Medium of Study *
+      <label>Full name *<input name="fullName" required minLength={2} maxLength={120} autoComplete="name" placeholder="Enter your full name" defaultValue={profile.full_name} /></label>
+      <label>Mobile number *<input {...mobileProps} defaultValue={profile.mobile} /></label>
+      <label>School or college *<input name="institution" required minLength={2} maxLength={160} placeholder="Name of institution" defaultValue={profile.institution} /></label>
+      <label>Semester or year *<input name="semesterYear" required maxLength={40} placeholder="e.g. Semester 4" defaultValue={profile.semester_year} /></label>
+      <label className="full">Medium of study *
         <select name="medium" required defaultValue={profile.medium ?? ''}>
           <option value="" disabled>Select your medium</option>
           {STUDY_MEDIUMS.map(medium => <option key={medium}>{medium}</option>)}
@@ -48,8 +48,8 @@ export function ScribeFields({ profile = {} }) {
   const mediums = profile.writing_mediums ?? [];
   return (
     <>
-      <label>Full Name *<input name="fullName" required minLength={2} maxLength={120} autoComplete="name" placeholder="Enter your full name" defaultValue={profile.full_name} /></label>
-      <label>Mobile Number *<input {...mobileProps} defaultValue={profile.mobile} /></label>
+      <label>Full name *<input name="fullName" required minLength={2} maxLength={120} autoComplete="name" placeholder="Enter your full name" defaultValue={profile.full_name} /></label>
+      <label>Mobile number *<input {...mobileProps} defaultValue={profile.mobile} /></label>
       <label>Age *<input name="age" required type="number" min={16} max={100} placeholder="Your age" defaultValue={profile.age} /></label>
       <label>City *<input name="city" required minLength={2} maxLength={80} placeholder="Your city" defaultValue={profile.city} /></label>
       <fieldset className="full">
@@ -60,21 +60,21 @@ export function ScribeFields({ profile = {} }) {
           ))}
         </div>
       </fieldset>
-      <label>Highest Qualification *
+      <label>Highest qualification *
         <select name="qualificationLevel" required defaultValue={profile.qualification_level ?? ''}>
           <option value="" disabled>Select level</option>
           {QUALIFICATION_LEVELS.map(level => <option key={level.value} value={level.value}>{level.label}</option>)}
         </select>
       </label>
-      <label>Course / Degree *<input name="qualification" required maxLength={120} placeholder="e.g. BCom, BSc, Engineering, SSLC" defaultValue={profile.qualification} /></label>
-      <label className="full">Background / Stream *
+      <label>Course or degree *<input name="qualification" required maxLength={120} placeholder="e.g. BCom, BSc, Engineering, SSLC" defaultValue={profile.qualification} /></label>
+      <label className="full">Background or stream *
         <select name="background" required defaultValue={profile.background ?? ''}>
           <option value="" disabled>Select background</option>
           {BACKGROUNDS.map(background => <option key={background}>{background}</option>)}
         </select>
       </label>
       <fieldset className="full">
-        <legend>Which medium can you write in? * <small>(select all that apply)</small></legend>
+        <legend>Languages you can write in * <small>(choose all that apply)</small></legend>
         <div className="choice-pills">
           {WRITING_MEDIUMS.map(medium => (
             <label key={medium}><input type="checkbox" name="writingMedium" value={medium} defaultChecked={mediums.includes(medium)} /><span>{medium}</span></label>
