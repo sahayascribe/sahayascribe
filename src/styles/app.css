@@ -292,25 +292,78 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .signin { margin-top: 18px; color: var(--muted); }
 
-.sample-ticket { margin: 0; }
-.sample-ticket .request-card { box-shadow: var(--shadow-md); }
-.sample-ticket figcaption { margin-top: 14px; color: var(--muted); font-size: 0.9375rem; }
-.sample-ticket figcaption strong { color: var(--text); }
-.sample-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.sample-title { color: var(--muted); font-size: 0.9375rem; font-weight: 700; }
-.sample-switch { display: inline-flex; gap: 4px; padding: 4px; border: 1px solid var(--rule); border-radius: 999px; background: var(--surface); }
-.sample-switch button {
-  min-height: 36px;
-  padding: 0 16px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font-size: 0.9375rem;
+.trust-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
   font-weight: 700;
 }
-.sample-switch button[aria-pressed='true'] { background: var(--action); color: #fff; }
-.sample-ticket .button-row .primary-btn { pointer-events: none; }
+.trust-row li { display: inline-flex; align-items: center; gap: 8px; }
+.trust-row li::before {
+  content: '\2713';
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--ink-wash);
+  color: var(--ink-strong);
+  font-size: 0.8125rem;
+}
+
+.role-panel {
+  padding: clamp(24px, 4vw, 36px);
+  border: 1px solid var(--rule);
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+}
+.high-contrast .role-panel { border: 2px solid #000; }
+.panel-kicker { color: var(--ink); font-size: 0.9375rem; font-weight: 700; }
+.role-panel h2 { margin-top: 6px; font-size: 1.875rem; font-weight: 800; letter-spacing: -0.02em; }
+.panel-lead { margin-top: 6px; color: var(--muted); }
+.role-panel .role-choices { margin-top: 22px; max-width: none; }
+.role-panel .primary-btn.block { margin-top: 22px; }
+.role-panel .signin { margin-top: 20px; text-align: center; }
+
+/* Soft background behind the home hero, carried over from the first version of the site:
+   a warm glow, a teal glow, a cream-to-lavender split and two soft circles. Full width. */
+main { overflow-x: clip; }
+.welcome-screen .hero { position: relative; isolation: isolate; }
+.welcome-screen .hero::before {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  top: calc(-1 * clamp(32px, 6vw, 72px));
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 10% 8%, rgba(255, 184, 75, 0.24), transparent 26%),
+    radial-gradient(circle at 74% 82%, rgba(14, 124, 107, 0.14), transparent 30%),
+    linear-gradient(125deg, #fffaf1 0 48%, #f3f0ff 48% 100%);
+  border-bottom: 1px solid var(--rule);
+}
+.welcome-screen .hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 6%;
+  right: -70px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(242, 111, 145, 0.14);
+  box-shadow: calc(-1 * min(52vw, 640px)) min(30vw, 380px) 0 -38px rgba(70, 169, 212, 0.16);
+  pointer-events: none;
+}
+.welcome-screen .how-it-works { border-top: 0; }
+.high-contrast .welcome-screen .hero::before,
+.high-contrast .welcome-screen .hero::after { display: none; }
 
 .how-it-works {
   padding-top: clamp(36px, 5vw, 56px);
@@ -840,7 +893,8 @@ legend { margin-bottom: 10px; padding: 0; }
 
 @media (max-width: 960px) {
   .hero { grid-template-columns: minmax(0, 1fr); }
-  .sample-ticket { max-width: 560px; }
+  .role-panel { max-width: 560px; }
+  .welcome-screen .hero::after { top: -40px; right: -60px; width: 120px; height: 120px; box-shadow: none; }
   .dash-layout { grid-template-columns: 1fr; }
   .dash-aside { position: static; margin-top: 8px; padding-top: 24px; border-top: 1px solid var(--rule); }
 }
